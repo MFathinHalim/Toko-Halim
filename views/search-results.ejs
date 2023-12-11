@@ -1,0 +1,46 @@
+<!-- search-results.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Results</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Custom Style CSS -->
+    <link href="/styles.css" rel="stylesheet" />
+  </head>
+
+  <body class="container mt-5">
+    <h1 class="mb-4">Search Results for "<%= query %>"</h1>
+
+    <% if (results.length > 0) { %>
+    <div class="row">
+      <% results.forEach(function (product) { %>
+      <div class="col-md-4">
+        <div class="card mb-4">
+          <img
+            src="<%= product.gambar %>"
+            class="card-img-top img-fluid custom-image"
+            alt="<%= product.nama %>" />
+          <div class="card-body">
+            <h5 class="card-title"><%= product.nama %></h5>
+            <p class="card-text"><%= product.deskripsi %></p>
+            <h6 class="card-subtitle mb-2 text-muted"><%= product.harga %></h6>
+            <a href="/pesan/<%= product.nama %>" class="btn btn-primary"
+              >View Details</a
+            >
+          </div>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+    <% } else { %>
+    <p>No results found for "<%= query %>".</p>
+    <% } %>
+
+    <a href="/" class="mt-4">Back to Home</a>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

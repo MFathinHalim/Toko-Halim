@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link href="/styles.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <%- include("navbar.ejs") %>
+
+    <div class="container">
+      <h1>Admin Dashboard</h1>
+      <hr />
+      <h3>Tambahkan PRoduk</h3>
+      <form id="productForm" action="/admin/addProduct" method="post">
+        <!-- Field lainnya -->
+        <div class="mb-3">
+          <label for="name" class="form-label">Nama Produk:</label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            class="form-control"
+            required />
+        </div>
+
+        <div class="mb-3">
+          <label for="deskripsi" class="form-label">Deskripsi:</label>
+          <textarea
+            name="deskripsi"
+            id="deskripsi"
+            class="form-control"
+            required></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="harga" class="form-label">Harga:</label>
+          <input
+            type="number"
+            name="harga"
+            id="harga"
+            class="form-control"
+            required />
+        </div>
+
+        <div class="mb-3">
+          <label for="pembayaran" class="form-label">Metode Pembayaran:</label>
+          <input
+            type="text"
+            name="pembayaran"
+            id="pembayaran"
+            class="form-control"
+            required />
+        </div>
+
+        <!-- Input gambar dalam format data URI -->
+        <div class="mb-3">
+          <label for="gambarInput" class="form-label">Gambar Produk:</label>
+          <input
+            type="file"
+            id="gambarInput"
+            class="form-control"
+            accept="image/*"
+            required />
+          <input type="hidden" name="gambar" id="hasil" />
+        </div>
+
+        <!-- Tampilkan gambar yang akan diunggah -->
+        <div class="mb-3">
+          <label class="form-label">Preview:</label>
+          <img
+            id="preview"
+            src="#"
+            alt="Preview"
+            style="max-width: 100%; max-height: 200px; display: none" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Tambahkan Produk</button>
+      </form>
+
+      <script>
+        document
+          .getElementById("gambarInput")
+          .addEventListener("change", function (event) {
+            const fileInput = event.target;
+            const preview = document.getElementById("preview");
+
+            if (fileInput.files && fileInput.files[0]) {
+              const reader = new FileReader();
+
+              reader.onload = function (e) {
+                preview.src = e.target.result;
+                document.getElementById("hasil").value = e.target.result;
+                preview.style.display = "block";
+              };
+
+              reader.readAsDataURL(fileInput.files[0]);
+            }
+          });
+      </script>
+      <hr />
+      <h2>Belum Konfirmasi Bayar:</h2>
+      <ul class="order-list" id="unconfirmedOrders">
+        <% unconfirmedOrders.forEach(order => { %>
+        <li class="order-item">
+          <p>
+            <strong><%= order.product %></strong> - <%= order.nama %> - <%=
+            order.alamat %> - <%= order.email %>
+          </p>
+          <button
+            class="btn btn-success toggle-btn togglePaid"
+            data-order-id="<%= order.id %>">
+            Sudah Bayar
+          </button>
+        </li>
+        <% }); %>
+      </ul>
+
+      <h2>Belum Dikirim:</h2>
+      <ul class="order-list" id="unshippedOrders">
+        <% unshippedOrders.forEach(order => { %>
+        <li class="order-item">
+          <p>
+            <strong><%= order.product %></strong> - <%= order.nama %> - <%=
+            order.alamat %> - <%= order.email %>
+          </p>
+          <button
+            class="btn btn-info toggle-btn toggleShipped"
+            data-order-id="<%= order.id %>">
+            Sudah Dikirim
+          </button>
+        </li>
+        <% }); %>
+      </ul>
+
+      <h2>Sudah Dikirim:</h2>
+      <ul class="order-list">
+        <% shippedOrders.forEach(order => { %>
+        <li class="order-item">
+          <p>
+            <strong><%= order.product %></strong> - <%= order.nama %> - <%=
+            order.alamat %> - <%= order.email %>
+          </p>
+        </li>
+        <% }); %>
+      </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Include socket.io library -->
+    <script>
+      $(document).ready(function () {
+        const socket = io(); // Connect to the socket.io server
+
+        // Listen for 'pesanan' events
+        socket.on("pesanan", function (pesanan) {
+          console.log("Pesanan baru diterima", pesanan);
+
+          // Check the order status and add it to the appropriate list
+          const unconfirmedOrderHtml = `
+          <li class="order-item">
+            <p>
+              <strong>${pesanan.product}</strong> - ${pesanan.nama} - ${pesanan.alamat} - ${pesanan.email}
+            </p>
+            <button class="btn btn-success toggle-btn togglePaid" data-order-id="${pesanan.id}">
+              Sudah Bayar
+            </button>
+          </li>`;
+          $("#unconfirmedOrders").append(unconfirmedOrderHtml);
+        });
+
+        // Toggle shipped status
+        $("body").on("click", ".toggleShipped", function () {
+          const orderId = $(this).data("order-id");
+          $.ajax({
+            type: "POST",
+            url: `/admin/toggleShipped/${orderId}`,
+            success: function (response) {
+              // Handle success response if needed
+              window.location.href = "/admin";
+            },
+            error: function (error) {
+              // Handle error if needed
+              console.error(error);
+            },
+          });
+        });
+
+        // Toggle paid status
+        $("body").on("click", ".togglePaid", function () {
+          const orderId = $(this).data("order-id");
+          $.ajax({
+            type: "POST",
+            url: `/admin/togglePaid/${orderId}`,
+            success: function (response) {
+              // Handle success response if needed
+              window.location.href = "/admin";
+            },
+            error: function (error) {
+              // Handle error if needed
+              console.error(error);
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

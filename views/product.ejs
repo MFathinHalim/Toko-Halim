@@ -1,0 +1,172 @@
+<!-- product.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= data.nama %></title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Custom Style CSS -->
+    <link href="/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <%- include("navbar.ejs") %>
+    <div class="container">
+      <!-- Back to Home Link -->
+      <a href="/" class="back-to-home">Back to Home</a>
+      <!-- Product Details -->
+      <div class="row">
+        <!-- Image Section -->
+        <div class="col-md-6">
+          <img
+            src="<%= data.gambar %>"
+            class="card-img img-fluid product-image"
+            alt="<%= data.nama %>" />
+        </div>
+        <div class="col-md-6">
+          <div class="card mt-4 product-details">
+            <!-- Text Section -->
+            <h2 class="card-title product-title"><%= data.nama %></h2>
+            <p class="card-text lead product-description">
+              <%= data.deskripsi %>
+            </p>
+            <h4 class="card-subtitle mb-4 text-danger">RP <%= data.harga %></h4>
+            <button
+              class="btn btn-primary buy-now-btn"
+              data-bs-toggle="modal"
+              data-bs-target="#buyNowModal">
+              Buy Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buy Now Modal -->
+    <div
+      class="modal fade"
+      id="buyNowModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="buyNowModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="buyNowModalLabel">Purchase Details</h5>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="name">Name:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  placeholder="Enter your name" />
+              </div>
+              <div class="form-group">
+                <label for="email">Email:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="email"
+                  placeholder="Enter your Email" />
+              </div>
+              <div class="form-group">
+                <label for="address">Address:</label>
+                <textarea
+                  class="form-control"
+                  id="address"
+                  rows="3"
+                  placeholder="Enter your address"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal">
+              Close
+            </button>
+            <a href="#" class="btn btn-primary" id="buyNowButton">Buy Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      $(document).ready(function () {
+        // Check if "nama" and "alamat" are in localStorage
+        var storedName = localStorage.getItem("nama");
+        var storedEmail = localStorage.getItem("email");
+        var storedAddress = localStorage.getItem("alamat");
+
+        // Populate the input fields in the modal if data is present
+        if (storedName) {
+          $("#name").val(storedName);
+        }
+
+        if (storedAddress) {
+          $("#address").val(storedAddress);
+        }
+
+        if (storedEmail) {
+          $("#email").val(storedEmail);
+        }
+
+        // Buy Now button click event handler
+        $("#buyNowButton").click(function (event) {
+          // Prevent the default form submission behavior
+          event.preventDefault();
+          console.log("Button clicked. Prevented default behavior.");
+
+          // Get form data
+          var name = $("#name").val();
+          var address = $("#address").val();
+          var email = $("#email").val();
+
+          // Save data to localStorage
+          localStorage.setItem("email", email);
+          localStorage.setItem("nama", name);
+          localStorage.setItem("alamat", address);
+          const socket = io();
+
+          // Send AJAX request
+          $.ajax({
+            type: "POST",
+            url: "/pesan/<%= data.nama %>",
+            data: {
+              nama: name,
+              alamat: address,
+              email: email,
+            },
+            success: function (response) {
+              console.log("Server response:", response);
+              if (response.success) {
+                socket.emit("pesanan", {
+                  nama: name,
+                  alamat: address,
+                  email: email,
+                  product: "<%= data.nama %>",
+                });
+                // Redirect to product.link on success
+                window.location.href = "<%= data.pembayaran %>";
+              }
+            },
+            error: function (error) {
+              // Handle error, if needed
+              console.error(error);
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

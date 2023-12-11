@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Toko Halim - E-Commerce</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Custom Style CSS -->
+    <link href="/styles.css" rel="stylesheet" />
+  </head>
+  <body class="bg-dark text-white">
+    <%- include("navbar.ejs") %>
+    <!-- Hero Section -->
+    <div
+      class="jumbotron p-3 text-center"
+      style="
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+          url('https://cdnuploads.aa.com.tr/uploads/Contents/2023/12/11/thumbs_b_c_20ad63bd572bed32477e1c2067fa72e5.jpg?v=085328');
+        background-repeat: no-repeat;
+        background-size: cover;
+      ">
+      <h1 class="display-4" style="font-family: 'Montserrat'; color: #007a4d">
+        Toko Halim
+      </h1>
+      <p class="lead">Toko Menjual Alat Muslim</p>
+
+      <!-- Search form -->
+      <form action="/search" method="get" class="container">
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search products..."
+            name="q" />
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="submit">Search</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="container mt-2">
+      <!-- Featured Products -->
+      <div class="row">
+        <% data.forEach(function(product) { %>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <img
+              src="<%= product.gambar %>"
+              class="card-img-top img-fluid custom-image"
+              alt="<%= product.nama %>" />
+            <div class="card-body">
+              <h5 class="card-title"><%= product.nama %></h5>
+              <p class="card-text"><%= product.deskripsi %></p>
+              <h6 class="card-subtitle mb-2 text-danger">
+                RP <%= product.harga %>
+              </h6>
+              <a href="/pesan/<%= product.nama %>" class="btn btn-primary"
+                >Lihat Details</a
+              >
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+    <!-- Footer -->
+    <footer class="text-center mt-5">
+      <p>&copy; 2023 Toko Halim. All rights reserved.</p>
+    </footer>
+
+    <script src="/js/bootstrap.js"></script>
+  </body>
+</html>

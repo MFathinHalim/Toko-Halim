@@ -1,0 +1,69 @@
+.custom-image {
+  max-width: 100%; /* Adjust this value as needed */
+  height: 300px;
+  object-fit: cover;
+}
+body {
+  background-color: #f8f9fa;
+}
+.product-container {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-top: 20px;
+}
+.product-image {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.product-details {
+  padding: 20px;
+}
+.product-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.product-description {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+.product-price {
+  font-size: 24px;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 20px;
+}
+.buy-now-btn {
+  font-size: 18px;
+}
+.back-to-home {
+  display: block;
+  margin-top: 20px;
+  font-size: 16px;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.bg-dark,
+body {
+  background-color: #0f0f0f !important;
+  color: white;
+  font-family: "Karla";
+}
+.card,
+.card-body,
+.modal-dialog,
+.modal-content,
+.modal-header,
+.modal-body {
+  background-color: #232d3f !important;
+  color: white !important;
+}
+
+.btn-primary {
+  background-color: #008170;
+  border: solid #008170;
+}
