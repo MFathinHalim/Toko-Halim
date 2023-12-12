@@ -3,6 +3,14 @@ const mongoose = require("mongoose");
 const { mainModel } = require("../models/product");
 const { pesananModel } = require("../models/pesanan");
 require("dotenv").config();
+var nodemailer = require("nodemailer");
+var transporter = nodemailer.createTransport({
+  service: "yahoo",
+  auth: {
+    user: "halimfathin7@yahoo.com",
+    pass: "mlanuntpfhwcxbsm",
+  },
+});
 
 const uri: string = process.env.MONGODBURI;
 
@@ -83,7 +91,18 @@ mainRouter.post(
     if (order) {
       order.dikirim = !order.dikirim;
       await pesananModel.findOneAndUpdate({ id: orderId }, order);
+      var mailOptions = {
+        from: "halimfathin7@yahoo.com",
+        to: order.email,
+        subject: "Pesanan Anda Sudah Diterima",
+        text: "Pesanan anda sudah diterima Oleh Pihak Terkait!!",
+      };
 
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        }
+      });
       res.sendStatus(200);
     } else {
       res.sendStatus(404);
@@ -103,6 +122,18 @@ mainRouter.post(
       order.dibayar = !order.dibayar;
       await pesananModel.findOneAndUpdate({ id: orderId }, order);
 
+      var mailOptions = {
+        from: "halimfathin7@yahoo.com",
+        to: order.email,
+        subject: "Pesanan Anda Sudah Dikonfirmasi Membayar!",
+        text: "Pesanan anda sudah dikonfirmasi membayar dan akan segera dikirim!",
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        }
+      });
       res.sendStatus(200);
     } else {
       res.sendStatus(404);
@@ -133,10 +164,6 @@ mainRouter.get("/pesan/:nama", (req: Request, res: Response) => {
   if (product) {
     res.render("product", {
       data: product,
-    });
-  } else {
-    res.status(404).render("error", {
-      message: "Product not found",
     });
   }
 });

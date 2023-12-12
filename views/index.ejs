@@ -7,12 +7,14 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Custom Style CSS -->
     <link href="/styles.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Karla:wght@500&family=Montserrat:wght@500&display=swap"
+      rel="stylesheet" />
   </head>
   <body class="bg-dark text-white">
-    <%- include("navbar.ejs") %>
     <!-- Hero Section -->
     <div
-      class="jumbotron p-3 text-center"
+      class="jumbotron p-5 text-center"
       style="
         background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
           url('https://cdnuploads.aa.com.tr/uploads/Contents/2023/12/11/thumbs_b_c_20ad63bd572bed32477e1c2067fa72e5.jpg?v=085328');
@@ -25,15 +27,32 @@
       <p class="lead">Toko Menjual Alat Muslim</p>
 
       <!-- Search form -->
-      <form action="/search" method="get" class="container">
-        <div class="input-group mb-3">
+      <form action="/search" method="get" class="container pt-4">
+        <div class="input-group">
           <input
             type="text"
             class="form-control"
+            style="
+              border-radius: 0px;
+              background: rgba(255, 255, 255, 0.2);
+              backdrop-filter: blur(5px);
+              color: white;
+              -webkit-backdrop-filter: blur(5px);
+              border: 0;
+            "
             placeholder="Search products..."
             name="q" />
           <div class="input-group-append">
-            <button class="btn btn-primary" type="submit">Search</button>
+            <button
+              class="btn btn-danger"
+              style="
+                border-radius: 0px;
+                background-color: rgba(255, 0, 0, 0.5);
+                border: 0;
+              "
+              type="submit">
+              <span style="opacity: 1">Search</span>
+            </button>
           </div>
         </div>
       </form>

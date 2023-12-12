@@ -67,3 +67,7 @@ body {
   background-color: #008170;
   border: solid #008170;
 }
+
+::placeholder {
+  color: lightgray !important;
+}
